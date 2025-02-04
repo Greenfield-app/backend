@@ -18,9 +18,9 @@ module.exports = {
     password: DB_PASSWORD,
   },
   migrations: {
-    directory: "./db/migrations",
+    directory: __dirname + "./db/migrations",
   },
   seeds: {
-    directory: "./db/seeds",
+    directory: __dirname + "./db/seeds",
   },
 };
