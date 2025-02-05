@@ -27,7 +27,7 @@ app.use(express.json());
 // app.use("/", express.static(__dirname + "/../../client/dist"));
 
 app.get("/api", (req, res) => {
-  res.send("connected").status(200);
+  res.send({ message: "connected" }).status(200);
 });
 
 app.listen(PORT, () => {
