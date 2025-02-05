@@ -1,6 +1,7 @@
 const express = require("express");
 const knex = require("./knex");
 const cors = require("cors");
+const { hashHelper, vertify } = require("../passwordHelper/helper");
 const app = express();
 const PORT = process.env.PORT;
 const origins = [
@@ -25,9 +26,10 @@ app.use(
   })
 );
 app.use(express.json());
-// app.use("/", express.static(__dirname + "/../../client/dist"));
 
-app.get("/api", (req, res) => {
+app.get("/api", async (req, res) => {
+  const psw = await hashHelper("password");
+  console.log(psw);
   res.send({ message: "connected" }).status(200);
 });
 
