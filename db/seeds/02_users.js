@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-const TIMESTAMP = "1738739879000";
+
 const EXAMPLE_PWD =
   "$2a$10$b.wYcezF1WcHilMDwilsNeHtIIyBwifxahhP5fnQnyEVPJP9NppGi";
 exports.seed = async function (knex) {

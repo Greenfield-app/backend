@@ -2,9 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-const TIMESTAMP_1 = "1736061479000";
-const TIMESTAMP_2 = "1736666279000";
-const TIMESTAMP_3 = "1738412279000";
+
 exports.seed = async function (knex) {
   await knex("record").del();
   const users = await knex("users").select("id", "username");
