@@ -4,6 +4,11 @@
  */
 exports.up = async function (knex) {
   //
+  await knex.schema.createTable("food", (table) => {
+    table.increments("id").primary();
+    table.string("foodname", 35).notNullable();
+    table.string("description");
+  });
 };
 
 /**
@@ -11,5 +16,5 @@ exports.up = async function (knex) {
  * @returns { Promise<void> }
  */
 exports.down = async function (knex) {
-  //
+  await knex.schema.dropTable("food");
 };
