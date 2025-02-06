@@ -16,4 +16,4 @@ const vertify = async (inputPassword, hash) => {
     throw new Error("Vertify Failed");
   }
 };
-export default { hashHelper, vertify };
+module.exports = { hashHelper, vertify };
