@@ -54,6 +54,9 @@ app.get("/api/users", async (req, res) => {
 app.get("/api/user/:id", async (req, res) => {
   const user = { id: 1, userName: "Anne" };
   res.setHeader("Content-Type", "application/json");
+  const lastLogin = "2025-02-06 10:16:58.93003+09";
+  const newD = new Date(lastLogin).getTime();
+  console.log(newD);
   res.json(user).status(200);
 });
 
@@ -77,11 +80,43 @@ app.post("/api/new-food", async (req, res) => {
   res.json(foodInfo).status(204);
 });
 
-app.patch("/api/add-description", async (req, res) => {});
+app.patch("/api/change/description", async (req, res) => {
+  const newChange = res.body;
+  const changeFoodInfo = {
+    id: newChange.id,
+    description: newChange.description,
+  };
+  const returnInfo = {};
+  res.send(returnInfo).status(204);
+});
 
+//TODO
+app.patch("/api/change/food-name", async (req, res) => {
+  const newChange = res.body;
+  const changeFoodInfo = {
+    id: newChange.id,
+    foodName: newChange.foodName,
+  };
+  const returnInfo = {};
+  res.send(returnInfo).status(204);
+});
+//TODO
+app.patch("/api/change/user-name", async (req, res) => {
+  const newChange = res.body;
+  const changeFoodInfo = {
+    id: newChange.id,
+    userName: newChange.userName,
+  };
+  const returnInfo = {};
+  res.send(returnInfo).status(204);
+});
+//TODO
 app.post("/api/record/:userid/:foodid", async (req, res) => {
   const userId = req.params.userid;
   const foodId = req.params.foodid;
+  const recordDate = Date.now();
+  const newRecord = { userId, foodId, recordDate };
+  //query insert into record
   res.setHeader("Content-Type", "application/json");
   const recordInfo = {
     userId: userId,
