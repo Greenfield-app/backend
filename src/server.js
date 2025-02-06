@@ -77,6 +77,19 @@ app.post("/api/new-food", async (req, res) => {
   res.json(foodInfo).status(204);
 });
 
+app.post("/api/record/:userid/:foodid", async (req, res) => {
+  const userId = req.params.userid;
+  const foodId = req.params.foodid;
+  res.setHeader("Content-Type", "application/json");
+  const recordInfo = {
+    userId: userId,
+    foodId: foodId,
+    description: "Good",
+    recordDate: TIMESTAMP,
+  };
+  res.json(recordInfo).status(204);
+});
+
 app.post("/api/signup", async (req, res) => {
   const regInfo = req.body;
   try {
