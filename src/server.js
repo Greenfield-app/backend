@@ -14,6 +14,7 @@ const origins = [
   "http://localhost:4173",
   "http://localhost:3000",
 ];
+//TODO: express session,
 const TIMESTAMP = "1738739879000";
 app.use(
   cors({
@@ -119,13 +120,8 @@ app.post("/api/record/:userid/:foodid", async (req, res) => {
   const returnInfo = await record.newRecord(userId, foodId);
   console.log(returnInfo);
   res.setHeader("Content-Type", "application/json");
-  const recordInfo = {
-    userId: userId,
-    foodId: foodId,
-    description: "Good",
-    recordDate: TIMESTAMP,
-  };
-  res.json(recordInfo).status(204);
+
+  res.json(returnInfo).status(200);
 });
 
 app.post("/api/signup", async (req, res) => {
@@ -135,7 +131,6 @@ app.post("/api/signup", async (req, res) => {
     const hashedPwd = await hashHelper(plainPassword);
     console.log(hashedPwd);
     const userInfo = await user.newUser(regInfo.userName, hashedPwd);
-    console.log(userInfo);
     res.setHeader("Content-Type", "application/json");
     res.status(200).json(userInfo);
   } catch (error) {

@@ -5,12 +5,17 @@ const lastRecord = async (user_id) => {
   console.log(data);
 };
 const newRecord = async (user_id, food_id) => {
-  const recordDate = knex.fn.now();
-  const record = { user_id, food_id, record_at: recordDate };
+  const record = { user_id, food_id, record_at: knex.fn.now() };
   const data = await knex("record")
     .returning(["user_id", "food_id", "record_at"])
-    .insert(record);
-  console.log(data);
+    .insert(record)
+    .then(([data]) => {
+      return {
+        userId: data.user_id,
+        foodId: data.food_id,
+        recordAt: data.record_at,
+      };
+    });
   return data;
 };
 module.exports = {
