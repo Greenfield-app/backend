@@ -54,9 +54,7 @@ app.get("/api/users", async (req, res) => {
 app.get("/api/user/:id", async (req, res) => {
   const user = { id: 1, userName: "Anne" };
   res.setHeader("Content-Type", "application/json");
-  const lastLogin = "2025-02-06 10:16:58.93003+09";
-  const newD = new Date(lastLogin).getTime();
-  console.log(newD);
+
   res.json(user).status(200);
 });
 
@@ -79,6 +77,7 @@ app.post("/api/new-food", async (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.json(foodInfo).status(204);
 });
+
 
 app.patch("/api/change/description", async (req, res) => {
   const newChange = res.body;
@@ -117,6 +116,7 @@ app.post("/api/record/:userid/:foodid", async (req, res) => {
   const recordDate = Date.now();
   const newRecord = { userId, foodId, recordDate };
   //query insert into record
+
   res.setHeader("Content-Type", "application/json");
   const recordInfo = {
     userId: userId,
