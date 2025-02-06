@@ -1,7 +1,10 @@
 const express = require("express");
-const knex = require("./knex");
+// const knex = require("./knex");
 const cors = require("cors");
 const { hashHelper, vertify } = require("../passwordHelper/helper");
+const record = require("../queryBuilder/record");
+const user = require("../queryBuilder/user");
+
 const app = express();
 const PORT = process.env.PORT;
 const origins = [
@@ -78,7 +81,6 @@ app.post("/api/new-food", async (req, res) => {
   res.json(foodInfo).status(204);
 });
 
-
 app.patch("/api/change/description", async (req, res) => {
   const newChange = res.body;
   const changeFoodInfo = {
@@ -113,10 +115,9 @@ app.patch("/api/change/user-name", async (req, res) => {
 app.post("/api/record/:userid/:foodid", async (req, res) => {
   const userId = req.params.userid;
   const foodId = req.params.foodid;
-  const recordDate = Date.now();
-  const newRecord = { userId, foodId, recordDate };
   //query insert into record
-
+  const returnInfo = await record.newRecord(userId, foodId);
+  console.log(returnInfo);
   res.setHeader("Content-Type", "application/json");
   const recordInfo = {
     userId: userId,
@@ -132,40 +133,37 @@ app.post("/api/signup", async (req, res) => {
   try {
     const plainPassword = regInfo.password;
     const hashedPwd = await hashHelper(plainPassword);
-    const userInfo = {
-      userName: regInfo.userName,
-      creationDate: Date.now(),
-      hashed: hashedPwd,
-    };
-    //TODO:await insert to knex, DB not finished
-    const returnInfo = {
-      id: 4,
-      userName: userInfo.userName,
-    };
+    console.log(hashedPwd);
+    const userInfo = await user.newUser(regInfo.userName, hashedPwd);
+    console.log(userInfo);
     res.setHeader("Content-Type", "application/json");
-    res.json(returnInfo).status(204);
+    res.status(200).json(userInfo);
   } catch (error) {
-    res.send({ error: error, message: "Invalid user info" }).status(403);
+    res.status(403).send({ error: error, message: "Invalid user info" });
   }
 });
 
-app.post("/api/signin", async (req, res) => {
+app.patch("/api/signin", async (req, res) => {
   const signInInfo = req.body;
-  //userName, password, id
-  //query userId's hash in Knex
-  const exampleHash =
-    "$2a$10$DPdNcdn5C63Yyk1GgCU.iOSi5.jmutn2xx3oDEheohcRtP5Lbbwje";
-  const compared = await vertify(signInInfo.password, exampleHash);
-  if (compared === true) {
-    const returnInfo = {
-      id: 4,
-      userName: "Anna",
-    };
-    res.json(returnInfo).status(204);
-  } else {
-    res.status(401).send({ message: "SignIN Failed" });
+  try {
+    const originPassword = await user.getPasswod(signInInfo.userId);
+    const compared = await vertify(
+      signInInfo.password,
+      originPassword.password_hashed
+    );
+    if (compared === true) {
+      console.log("RESULT", compared); //work
+      const userInfo = await user.recordSignIn(signInInfo.userId);
+      res.status(200).json(userInfo);
+      return;
+    } else {
+      res.status(401).json({
+        message: "Incorrect Password or ID",
+      });
+    }
+  } catch (error) {
+    res.status(401).json({ message: "SignIn Failed", error: erro.message });
   }
-  console.log(compared);
 });
 
 app.listen(PORT, () => {
