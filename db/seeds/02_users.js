@@ -13,5 +13,15 @@ exports.seed = async function (knex) {
       creation_date: knex.fn.now(),
       password_hashed: EXAMPLE_PWD,
     },
+    {
+      username: "Sam",
+      creation_date: knex.fn.now(),
+      password_hashed: EXAMPLE_PWD,
+    },
+    {
+      username: "Alex",
+      creation_date: knex.fn.now(),
+      password_hashed: EXAMPLE_PWD,
+    },
   ]);
 };
