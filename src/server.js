@@ -70,11 +70,18 @@ app.get("/api/food/:id", async (req, res) => {
   res.json(food).status(200);
 });
 
+app.get("/api/last-record/:userid", async (req, res) => {
+  const id = req.params.userid;
+  //query
+  const lastRecord = await record.lastRecord(id);
+  res.setHeader("Content-Type", "application/json");
+  res.json(lastRecord).status(200);
+});
+
 app.post("/api/new-food", async (req, res) => {
   const newFood = req.body;
   const foodInfo = {
-    id: 5,
-    foodName: newFood.name,
+    foodname: newFood.foodName,
     description: newFood.description,
   };
   //TODO: insert into db
