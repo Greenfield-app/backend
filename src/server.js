@@ -77,8 +77,6 @@ app.post("/api/new-food", async (req, res) => {
   res.json(foodInfo).status(204);
 });
 
-app.patch("/api/add-description", async (req, res) => {});
-
 app.post("/api/record/:userid/:foodid", async (req, res) => {
   const userId = req.params.userid;
   const foodId = req.params.foodid;
