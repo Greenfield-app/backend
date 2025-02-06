@@ -4,7 +4,7 @@ const cors = require("cors");
 const { hashHelper, vertify } = require("../passwordHelper/helper");
 const record = require("../queryBuilder/record");
 const user = require("../queryBuilder/user");
-
+const food = require("../queryBuilder/food");
 const app = express();
 const PORT = process.env.PORT;
 const origins = [
@@ -14,8 +14,7 @@ const origins = [
   "http://localhost:4173",
   "http://localhost:3000",
 ];
-//TODO: express session,
-const TIMESTAMP = "1738739879000";
+//TODO: express session,!!!
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -35,100 +34,61 @@ app.get("/api", (req, res) => {
 });
 
 app.get("/api/foods", async (req, res) => {
-  const foodList = [
-    [
-      { id: 1, foodname: "ramen", description: "Ramen near me" },
-      { id: 2, foodname: "yakiniku", description: "Yakiniku in Sinjuku" },
-      { id: 3, foodname: "italian", description: "Highly recommended by ..." },
-    ],
-  ];
-  res.setHeader("Content-Type", "application/json");
-  res.json(foodList).status(200);
-});
-
-app.get("/api/users", async (req, res) => {
-  const userList = [
-    { id: 1, userName: "Anne" },
-    { id: 2, userName: "Sum" },
-  ];
-  res.setHeader("Content-Type", "application/json");
-  res.json(userList).status(200);
-});
-
-app.get("/api/user/:id", async (req, res) => {
-  const user = { id: 1, userName: "Anne" };
-  res.setHeader("Content-Type", "application/json");
-
-  res.json(user).status(200);
+  try {
+    const foodList = await food.allFood();
+    res.setHeader("Content-Type", "application/json");
+    res.json(foodList).status(200);
+  } catch (error) {
+    res.status(404).send({ error: error, message: "Failed get all food" });
+  }
 });
 
 app.get("/api/food/:id", async (req, res) => {
-  const id = req.params.id;
-  //query
-  const food = { id: 1, foodName: "ramen", description: "Ramen near me" };
-  res.setHeader("Content-Type", "application/json");
-  res.json(food).status(200);
+  const foodId = req.params.id;
+  try {
+    const foodInfo = await food.getFoodById(foodId);
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json(foodInfo);
+  } catch (error) {
+    res.status(404).send({ error: error, message: "Food not found" });
+  }
 });
 
 app.get("/api/last-record/:userid", async (req, res) => {
   const id = req.params.userid;
-  //query
-  const lastRecord = await record.lastRecord(id);
-  res.setHeader("Content-Type", "application/json");
-  res.json(lastRecord).status(200);
+  try {
+    const lastRecord = await record.lastRecord(id);
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json(lastRecord);
+  } catch (error) {
+    res.status(404).send({ error: error, message: "Record not found" });
+  }
 });
 
 app.post("/api/new-food", async (req, res) => {
   const newFood = req.body;
-  const foodInfo = {
-    foodname: newFood.foodName,
-    description: newFood.description,
-  };
-  //TODO: insert into db
-  res.setHeader("Content-Type", "application/json");
-  res.json(foodInfo).status(204);
+  try {
+    const foodInfo = await food.insertFood(
+      newFood.foodName,
+      newFood.description
+    );
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).send(foodInfo);
+  } catch (error) {
+    res.status(403).send({ error: error, message: "Invalid food info" });
+  }
 });
 
-app.patch("/api/change/description", async (req, res) => {
-  const newChange = res.body;
-  const changeFoodInfo = {
-    id: newChange.id,
-    description: newChange.description,
-  };
-  const returnInfo = {};
-  res.send(returnInfo).status(204);
-});
-
-//TODO
-app.patch("/api/change/food-name", async (req, res) => {
-  const newChange = res.body;
-  const changeFoodInfo = {
-    id: newChange.id,
-    foodName: newChange.foodName,
-  };
-  const returnInfo = {};
-  res.send(returnInfo).status(204);
-});
-//TODO
-app.patch("/api/change/user-name", async (req, res) => {
-  const newChange = res.body;
-  const changeFoodInfo = {
-    id: newChange.id,
-    userName: newChange.userName,
-  };
-  const returnInfo = {};
-  res.send(returnInfo).status(204);
-});
-//TODO
 app.post("/api/record/:userid/:foodid", async (req, res) => {
-  const userId = req.params.userid;
-  const foodId = req.params.foodid;
-  //query insert into record
-  const returnInfo = await record.newRecord(userId, foodId);
-  console.log(returnInfo);
-  res.setHeader("Content-Type", "application/json");
-
-  res.json(returnInfo).status(200);
+  try {
+    const userId = req.params.userid;
+    const foodId = req.params.foodid;
+    const returnInfo = await record.newRecord(userId, foodId);
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json(returnInfo);
+  } catch (error) {
+    res.status(403).send({ error: error, message: "Invalid record" });
+  }
 });
 
 app.post("/api/signup", async (req, res) => {
@@ -136,7 +96,6 @@ app.post("/api/signup", async (req, res) => {
   try {
     const plainPassword = regInfo.password;
     const hashedPwd = await hashHelper(plainPassword);
-    console.log(hashedPwd);
     const userInfo = await user.newUser(regInfo.userName, hashedPwd);
     res.setHeader("Content-Type", "application/json");
     res.status(200).json(userInfo);
@@ -154,7 +113,6 @@ app.patch("/api/signin", async (req, res) => {
       originPassword.password_hashed
     );
     if (compared === true) {
-      console.log("RESULT", compared); //work
       const userInfo = await user.recordSignIn(signInInfo.userId);
       res.status(200).json(userInfo);
       return;

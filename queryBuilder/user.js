@@ -8,7 +8,8 @@ const newUser = async (user_name, password_hashed) => {
     });
     return userInfo[0];
   } catch (error) {
-    throw new Error("Failed insert new user");
+    console.error(error);
+    throw error;
   }
 };
 
@@ -23,10 +24,10 @@ const recordSignIn = async (user_id) => {
         }
         return { userId: user.id, userName: user.username };
       });
-    console.log(userInfo); //also work
     return userInfo;
   } catch (error) {
-    throw new Error("Failed record SignIn");
+    console.error(error);
+    throw error;
   }
 };
 
@@ -38,7 +39,8 @@ const getPasswod = async (user_id) => {
       .where("id", user_id);
     return password[0];
   } catch (error) {
-    throw new Error("Failed get password");
+    console.error(error);
+    throw error;
   }
 };
 
