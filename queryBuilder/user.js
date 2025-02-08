@@ -1,11 +1,14 @@
 const knex = require("../src/knex");
-const newUser = async (user_name, password_hashed) => {
+const newUser = async (user_name, password_hashed, email) => {
   try {
-    const userInfo = await knex("users").returning(["id", "username"]).insert({
-      username: user_name,
-      password_hashed: password_hashed,
-      creation_date: knex.fn.now(),
-    });
+    const userInfo = await knex("users")
+      .returning(["id", "username", "email"])
+      .insert({
+        username: user_name,
+        password_hashed: password_hashed,
+        creation_date: knex.fn.now(),
+        email: email,
+      });
     return userInfo[0];
   } catch (error) {
     console.error(error);
@@ -13,16 +16,18 @@ const newUser = async (user_name, password_hashed) => {
   }
 };
 
-const recordSignIn = async (user_id) => {
+const recordSignIn = async (email) => {
   try {
     const userInfo = await knex("users")
-      .where("id", user_id)
-      .update({ last_login: knex.fn.now() }, ["id", "username", "last_login"])
+      .where("email", email)
+      .update({ last_login: knex.fn.now() }, [
+        "id",
+        "username",
+        "last_login",
+        "email",
+      ])
       .then(([user]) => {
-        if (!user) {
-          throw new Error("User not found");
-        }
-        return { userId: user.id, userName: user.username };
+        return { userId: user.id, userName: user.username, email: user.email };
       });
     return userInfo;
   } catch (error) {
@@ -31,12 +36,12 @@ const recordSignIn = async (user_id) => {
   }
 };
 
-const getPasswod = async (user_id) => {
+const getPasswod = async (email) => {
   try {
     const password = await knex
       .select("password_hashed")
       .from("users")
-      .where("id", user_id);
+      .where("email", email);
     return password[0];
   } catch (error) {
     console.error(error);

@@ -109,34 +109,45 @@ app.post("/api/signup", async (req, res) => {
   const regInfo = req.body;
   try {
     const plainPassword = regInfo.password;
+    const email = regInfo.email;
     const hashedPwd = await hashHelper(plainPassword);
-    const userInfo = await user.newUser(regInfo.userName, hashedPwd);
+    const userInfo = await user.newUser(regInfo.userName, hashedPwd, email);
     res.setHeader("Content-Type", "application/json");
     res.status(200).json(userInfo);
   } catch (error) {
-    res.status(403).send({ error: error, message: "Invalid user info" });
+    if (error.code === "23505" && error.constraint.includes("email")) {
+      res.status(409).send({ error: error, message: "Email already exists" });
+      return;
+    }
+    res.status(400).send({ error: error, message: "Invalid user info" });
   }
 });
 
 app.patch("/api/signin", async (req, res) => {
   const signInInfo = req.body;
   try {
-    const originPassword = await user.getPasswod(signInInfo.userId);
+    const originPassword = await user.getPasswod(signInInfo.email);
+    if (!originPassword) {
+      res.status(401).json({ message: "Invalid password or email" });
+      return;
+    }
     const compared = await vertify(
       signInInfo.password,
       originPassword.password_hashed
     );
     if (compared === true) {
-      const userInfo = await user.recordSignIn(signInInfo.userId);
+      const userInfo = await user.recordSignIn(signInInfo.email);
       res.status(200).json(userInfo);
       return;
-    } else {
-      res.status(401).json({
-        message: "Incorrect Password or ID",
-      });
     }
+    res.status(401).json({ message: "Invalid password or email" });
   } catch (error) {
-    res.status(401).json({ message: "SignIn Failed", error: error.message });
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: "An error ocurred during sign in", error: error });
+    return;
+
   }
 });
 
