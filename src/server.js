@@ -109,8 +109,9 @@ app.post("/api/signup", async (req, res) => {
   const regInfo = req.body;
   try {
     const plainPassword = regInfo.password;
+    const email = regInfo.email;
     const hashedPwd = await hashHelper(plainPassword);
-    const userInfo = await user.newUser(regInfo.userName, hashedPwd);
+    const userInfo = await user.newUser(regInfo.userName, hashedPwd, email);
     res.setHeader("Content-Type", "application/json");
     res.status(200).json(userInfo);
   } catch (error) {
@@ -121,19 +122,15 @@ app.post("/api/signup", async (req, res) => {
 app.patch("/api/signin", async (req, res) => {
   const signInInfo = req.body;
   try {
-    const originPassword = await user.getPasswod(signInInfo.userId);
+    const originPassword = await user.getPasswod(signInInfo.email);
     const compared = await vertify(
       signInInfo.password,
       originPassword.password_hashed
     );
     if (compared === true) {
-      const userInfo = await user.recordSignIn(signInInfo.userId);
+      const userInfo = await user.recordSignIn(signInInfo.email);
       res.status(200).json(userInfo);
       return;
-    } else {
-      res.status(401).json({
-        message: "Incorrect Password or ID",
-      });
     }
   } catch (error) {
     res.status(401).json({ message: "SignIn Failed", error: error.message });
