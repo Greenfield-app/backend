@@ -27,9 +27,6 @@ const recordSignIn = async (email) => {
         "email",
       ])
       .then(([user]) => {
-        if (!user) {
-          throw new Error("User not found");
-        }
         return { userId: user.id, userName: user.username, email: user.email };
       });
     return userInfo;
