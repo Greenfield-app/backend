@@ -15,7 +15,6 @@ const origins = [
   "http://localhost:3000",
 ];
 //TODO: express session,!!!
-//TODO: express session,!!!
 app.use(
   cors({
     origin: function (origin, callback) {
