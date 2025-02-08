@@ -1,5 +1,5 @@
 const express = require("express");
-// const knex = require("./knex");
+const session = require("express-session");
 const cors = require("cors");
 const { hashHelper, vertify } = require("../passwordHelper/helper");
 const record = require("../queryBuilder/record");
@@ -27,12 +27,13 @@ app.use(
     credentials: true,
   })
 );
+// app.use(session({}));
 app.use(express.json());
 
 app.get("/api", (req, res) => {
   res.send({ message: "connected" }).status(200);
 });
-
+//return an array contains all foods
 app.get("/api/foods", async (req, res) => {
   try {
     const foodList = await food.allFood();
@@ -42,7 +43,7 @@ app.get("/api/foods", async (req, res) => {
     res.status(404).send({ error: error, message: "Failed get all food" });
   }
 });
-
+//get food by id
 app.get("/api/food/:id", async (req, res) => {
   const foodId = req.params.id;
   try {
@@ -54,6 +55,19 @@ app.get("/api/food/:id", async (req, res) => {
   }
 });
 
+//get all record of a certain user
+app.get("/api/records/:userid", async (req, res) => {
+  const id = req.params.userid;
+  try {
+    const allRecords = await record.allRecord(id);
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json(allRecords);
+  } catch (error) {
+    res.status(404).send({ error: error, message: "Record not found" });
+  }
+});
+
+//get last record of a certain user
 app.get("/api/last-record/:userid", async (req, res) => {
   const id = req.params.userid;
   try {
@@ -64,7 +78,7 @@ app.get("/api/last-record/:userid", async (req, res) => {
     res.status(404).send({ error: error, message: "Record not found" });
   }
 });
-
+//add new food and get new food's id
 app.post("/api/new-food", async (req, res) => {
   const newFood = req.body;
   try {
@@ -78,7 +92,7 @@ app.post("/api/new-food", async (req, res) => {
     res.status(403).send({ error: error, message: "Invalid food info" });
   }
 });
-
+//add new record and get this record's time, userid, and foodid
 app.post("/api/record/:userid/:foodid", async (req, res) => {
   try {
     const userId = req.params.userid;
@@ -122,7 +136,7 @@ app.patch("/api/signin", async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(401).json({ message: "SignIn Failed", error: erro.message });
+    res.status(401).json({ message: "SignIn Failed", error: error.message });
   }
 });
 
