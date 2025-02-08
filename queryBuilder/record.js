@@ -1,5 +1,22 @@
 const knex = require("../src/knex");
 
+const allRecord = async (user_id) => {
+  try {
+    const data = await knex("record").where("user_id", user_id).select();
+
+    const sortedData = data.sort((a, b) => {
+      const dataA = Number(new Date(a.record_at).getTime());
+      const dataB = Number(new Date(b.record_at).getTime());
+      return dataB - dataA;
+    });
+
+    return sortedData;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 const lastRecord = async (user_id) => {
   try {
     const data = await knex("record").where("user_id", user_id).select();
@@ -41,6 +58,7 @@ const newRecord = async (user_id, food_id) => {
   }
 };
 module.exports = {
+  allRecord,
   lastRecord,
   newRecord,
 };
