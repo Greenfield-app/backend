@@ -8,9 +8,17 @@ exports.seed = async function (knex) {
     { foodname: "ramen", description: "Ramen near me" },
     { foodname: "yakiniku", description: "Yakiniku in Sinjuku" },
     { foodname: "italian", description: "Highly recommended by ..." },
-    { foodname: "mexican", description: "spicy stuff" },
-    { foodname: "pizza", description: "its got pepperonis" },
-    { foodname: "sushi", description: "lottsa fish" },
-    { foodname: "oden", description: "delicious" },
+    { foodname: "Casu Marzu", description: "Ramen near me" },
+    { foodname: "Rocky Mountain oysters", description: "Yakiniku in Sinjuku" },
+    {
+      foodname: "Jellied moose nose",
+      description: "Highly recommended by ...",
+    },
+    { foodname: "Shirako:", description: "Ramen near me" },
+    { foodname: "Fruit bat soup", description: "Yakiniku in Sinjuku" },
+    { foodname: "Chicken Shawarma", description: "Highly recommended by ..." },
+    { foodname: "Miso Soup", description: "Ramen near me" },
+    { foodname: "Fried tarantulas", description: "Yakiniku in Sinjuku" },
+
   ]);
 };

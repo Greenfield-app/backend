@@ -2,14 +2,26 @@ const knex = require("../src/knex");
 const newUser = async (user_name, password_hashed, email) => {
   try {
     const userInfo = await knex("users")
-      .returning(["id", "username", "email"])
+      .returning(["id", "username", "email", "last_login"])
+
       .insert({
         username: user_name,
         password_hashed: password_hashed,
         creation_date: knex.fn.now(),
         email: email,
+      })
+      .then(([user]) => {
+        console.log(user);
+        return {
+          userId: user.id,
+          userName: user.username,
+          email: user.email,
+          lastLogin: user.last_login,
+        };
       });
-    return userInfo[0];
+
+    return userInfo;
+
   } catch (error) {
     console.error(error);
     throw error;
@@ -27,7 +39,12 @@ const recordSignIn = async (email) => {
         "email",
       ])
       .then(([user]) => {
-        return { userId: user.id, userName: user.username, email: user.email };
+        return {
+          userId: user.id,
+          userName: user.username,
+          email: user.email,
+          lastLogin: user.last_login,
+        };
       });
     return userInfo;
   } catch (error) {

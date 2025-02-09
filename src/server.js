@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
@@ -27,7 +28,22 @@ app.use(
     credentials: true,
   })
 );
-// app.use(session({}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    name: "sessionId",
+    resave: false,
+    saveUninitialized: false,
+    rolling: true,
+    cookie: {
+      sameSite: "none",
+      maxAge: 3 * 24 * 60 * 60 * 1000,
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: "strict",
+    },
+  })
+);
 app.use(express.json());
 
 app.get("/api", (req, res) => {
@@ -112,6 +128,12 @@ app.post("/api/signup", async (req, res) => {
     const email = regInfo.email;
     const hashedPwd = await hashHelper(plainPassword);
     const userInfo = await user.newUser(regInfo.userName, hashedPwd, email);
+    console.log(userInfo);
+    req.session.user = {
+      email: userInfo.email,
+      lastActivity: userInfo.lastLogin,
+    };
+    console.log(req.session);
     res.setHeader("Content-Type", "application/json");
     res.status(200).json(userInfo);
   } catch (error) {
@@ -137,6 +159,12 @@ app.patch("/api/signin", async (req, res) => {
     );
     if (compared === true) {
       const userInfo = await user.recordSignIn(signInInfo.email);
+      req.session.user = {
+        email: signInInfo.email,
+        lastActivity: userInfo.lastLogin,
+      };
+      console.log(req.session);
+      res.setHeader("Content-Type", "application/json");
       res.status(200).json(userInfo);
       return;
     }
@@ -149,6 +177,15 @@ app.patch("/api/signin", async (req, res) => {
     return;
 
   }
+});
+
+app.post("/logout", (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      return res.status(500).json({ error: "Could not log out" });
+    }
+    res.status(200).json({ message: "Logged out successfully" });
+  });
 });
 
 app.listen(PORT, () => {
