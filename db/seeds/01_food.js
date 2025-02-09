@@ -19,6 +19,6 @@ exports.seed = async function (knex) {
     { foodname: "Chicken Shawarma", description: "Highly recommended by ..." },
     { foodname: "Miso Soup", description: "Ramen near me" },
     { foodname: "Fried tarantulas", description: "Yakiniku in Sinjuku" },
-    { foodname: "Bushmeat", description: "Highly recommended by ..." },
+
   ]);
 };

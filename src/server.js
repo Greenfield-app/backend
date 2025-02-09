@@ -175,6 +175,7 @@ app.patch("/api/signin", async (req, res) => {
       .status(500)
       .json({ message: "An error ocurred during sign in", error: error });
     return;
+
   }
 });
 

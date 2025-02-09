@@ -3,6 +3,7 @@ const newUser = async (user_name, password_hashed, email) => {
   try {
     const userInfo = await knex("users")
       .returning(["id", "username", "email", "last_login"])
+
       .insert({
         username: user_name,
         password_hashed: password_hashed,
@@ -20,6 +21,7 @@ const newUser = async (user_name, password_hashed, email) => {
       });
 
     return userInfo;
+
   } catch (error) {
     console.error(error);
     throw error;
