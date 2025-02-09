@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
@@ -29,7 +30,7 @@ app.use(
 );
 app.use(
   session({
-    secret: "s0rnPpluxVD|@c,",
+    secret: process.env.SESSION_SECRET,
     name: "sessionId",
     resave: false,
     saveUninitialized: false,
@@ -175,6 +176,15 @@ app.patch("/api/signin", async (req, res) => {
       .json({ message: "An error ocurred during sign in", error: error });
     return;
   }
+});
+
+app.post("/logout", (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      return res.status(500).json({ error: "Could not log out" });
+    }
+    res.status(200).json({ message: "Logged out successfully" });
+  });
 });
 
 app.listen(PORT, () => {
