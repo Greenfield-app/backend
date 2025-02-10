@@ -15,7 +15,6 @@ const newUser = async (user_name, password_hashed, email) => {
           userId: user.id,
           userName: user.username,
           email: user.email,
-          lastLogin: user.last_login,
         };
       });
 
