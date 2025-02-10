@@ -11,6 +11,7 @@ const PORT = process.env.PORT;
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const SPOONACULAR_BASE_URL = process.env.SPOONACULAR_BASE_URL;
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+const GOOGLE_PLACES_BASE_URL = process.env.GOOGLE_PLACES_BASE_URL;
 const origins = [
   "https://frontend-gd1y.onrender.com",
   "http://localhost:5173",
@@ -230,9 +231,7 @@ app.get("/api/random", async (req, res) => {
       const lat = req.query.latitude;
       const lng = req.query.longitude;
       const radius = 3000;
-      const placesUrl = new URL(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json`
-      );
+      const placesUrl = new URL(`${GOOGLE_PLACES_BASE_URL}/nearbysearch/json`);
       placesUrl.searchParams.append("location", `${lat},${lng}`);
       placesUrl.searchParams.append("radius", radius);
       placesUrl.searchParams.append("keyword", randomFood.foodName);
