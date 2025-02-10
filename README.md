@@ -6,6 +6,8 @@ To use the backend with the front end, you will also need this repo: https://git
 
 ## Getting Started
 
+### Setting up dependencies
+
 Download this repo. 
 
 Then in the backend root directory, run: 
@@ -29,7 +31,7 @@ SESSION_SECRET=
 
 Fill in this fields with the information that matches your local database setup.
 
-*** running migrations and seeds
+### running migrations and seeds
 
 Next, in the backend root directory, run:
 
