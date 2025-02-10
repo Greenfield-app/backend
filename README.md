@@ -24,10 +24,10 @@ Once you have postgres, create a database in your local postgres called "appdata
 
 In the backend root directory, create a .env.local file with the following fields:
 
-`DB_USER=<br>
+<p>DB_USER=<br>
 DB_PASSWORD=<br>
 PORT=<br>
-SESSION_SECRET=`
+SESSION_SECRET=<p/>
 
 Fill in this fields with the information that matches your local database setup.
 
