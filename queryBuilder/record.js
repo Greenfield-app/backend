@@ -4,11 +4,19 @@ const allRecord = async (user_id) => {
   try {
     const data = await knex("record").where("user_id", user_id).select();
 
-    const sortedData = data.sort((a, b) => {
-      const dataA = Number(new Date(a.record_at).getTime());
-      const dataB = Number(new Date(b.record_at).getTime());
-      return dataB - dataA;
-    });
+    const sortedData = data
+      .sort((a, b) => {
+        const dataA = Number(new Date(a.record_at).getTime());
+        const dataB = Number(new Date(b.record_at).getTime());
+        return dataB - dataA;
+      })
+      .map((record) => {
+        return {
+          userId: record.user_id,
+          foodId: record.food_id,
+          recordAt: record.record_at,
+        };
+      });
 
     return sortedData;
   } catch (error) {
