@@ -180,6 +180,7 @@ app.patch("/api/signin", async (req, res) => {
 });
 
 app.post("/api/logout", (req, res) => {
+
   req.session.destroy((error) => {
     if (error) {
       return res.status(500).json({ error: "Could not log out" });
@@ -209,6 +210,7 @@ app.get("/api/random", async (req, res) => {
   console.log(randomFoodArr);
   res.status(200).json(randomFoodArr);
 });
+
 
 app.listen(PORT, () => {
   console.log("listen to PORT:", PORT);
