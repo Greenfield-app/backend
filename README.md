@@ -43,7 +43,7 @@ and
 
 This will run the migrations and seeds for the database
 
-*** starting the server
+### starting the server
 
 To start the server, run `npm start`
 
