@@ -200,16 +200,24 @@ app.get("/api/random", async (req, res) => {
     const randomFoodResponse = await fetch(randomFoodUrl.toString(), {
       method: "GET",
     });
-    const randomFoodRaw = await randomFoodResponse.json();
-    const randomFood = randomFoodRaw.recipes.map((foodObj) => {
-      const foodInfo = {
-        foodName: foodObj.title,
-        image: foodObj.image,
-        imageType: foodObj.imageType,
-      };
-      return foodInfo;
-    })[0];
-    console.log(randomFood);
+    console.log(randomFoodResponse);
+    if (randomFoodResponse.status === 200) {
+      const randomFoodRaw = await randomFoodResponse.json();
+      const randomFood = randomFoodRaw.recipes.map((foodObj) => {
+        const foodInfo = {
+          foodName: foodObj.title,
+          image: foodObj.image,
+          imageType: foodObj.imageType,
+        };
+        return foodInfo;
+      })[0];
+      console.log(randomFood);
+    }
+    const randomFood = {
+      foodName: "Chicken Burritos",
+      image: "https://img.spoonacular.com/recipes/637999-556x370.jpg",
+      imageType: "jpg",
+    };
 
     if (randomFood) {
       if (!req.query.latitude || !req.query.longitude) {
@@ -221,7 +229,7 @@ app.get("/api/random", async (req, res) => {
       //call google place with food name and location
       const lat = req.query.latitude;
       const lng = req.query.longitude;
-      const radius = 5000;
+      const radius = 3000;
       const placesUrl = new URL(
         `https://maps.googleapis.com/maps/api/place/nearbysearch/json`
       );
@@ -229,14 +237,27 @@ app.get("/api/random", async (req, res) => {
       placesUrl.searchParams.append("radius", radius);
       placesUrl.searchParams.append("keyword", randomFood.foodName);
       placesUrl.searchParams.append("type", "restaurant");
+      placesUrl.searchParams.append("maxResults", 3);
+      placesUrl.searchParams.append("pageSize", 3);
       placesUrl.searchParams.append("key", GOOGLE_MAPS_API_KEY);
 
       const placesResponse = await fetch(placesUrl.toString());
-      const placeInfo = await placesResponse.json();
+      const placeInfoRaw = await placesResponse.json();
+      const placeInfo = placeInfoRaw.results.map((place) => {
+        return {
+          name: place.name,
+          address: place.vicinity,
+          rating: place.rating,
+          userRatingsTotal: place.user_ratings_total,
+          location: place.geometry.location,
+          placeId: place.place_id,
+        };
+      });
       console.log(placeInfo);
+
       res
         .status(200)
-        .json({ randomFoodInfo: randomFood, restaurant: { placeInfo } });
+        .json({ randomFoodInfo: randomFood, restaurants: placeInfo });
     }
   } catch (error) {
     console.log(error);
