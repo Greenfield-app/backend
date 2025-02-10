@@ -3,7 +3,15 @@ const insertFood = async (foodName, description) => {
   try {
     const foodInfo = await knex("food")
       .returning(["id", "foodname"])
-      .insert({ foodname: foodName, description: description });
+      .insert({ foodname: foodName, description: description })
+      .then(([food]) => {
+        return {
+          foodId: food.id,
+          foodName: food.foodname,
+          description: food.description,
+        };
+      });
+
     return foodInfo;
   } catch (error) {
     console.error(error);

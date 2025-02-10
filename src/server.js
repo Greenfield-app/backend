@@ -10,6 +10,9 @@ const app = express();
 const PORT = process.env.PORT;
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const SPOONACULAR_BASE_URL = process.env.SPOONACULAR_BASE_URL;
+
+const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+
 const origins = [
   "https://frontend-gd1y.onrender.com",
   "http://localhost:5173",
@@ -98,6 +101,7 @@ app.get("/api/last-record/:userid", async (req, res) => {
 //add new food and get new food's id
 app.post("/api/new-food", async (req, res) => {
   const newFood = req.body;
+  console.log(newFood);
   try {
     const foodInfo = await food.insertFood(
       newFood.foodName,
@@ -175,6 +179,95 @@ app.patch("/api/signin", async (req, res) => {
     res
       .status(500)
       .json({ message: "An error ocurred during sign in", error: error });
+    return;
+  }
+});
+
+app.post("/api/logout", (req, res) => {
+  req.session.destroy((error) => {
+    if (error) {
+      return res.status(500).json({ error: "Could not log out" });
+    }
+    res.status(200).json({ message: "Logged out successfully" });
+  });
+});
+
+//Fetch outer random food
+app.get("/api/random", async (req, res) => {
+  try {
+    console.log(req.query);
+    const randomFoodUrl = new URL(`${SPOONACULAR_BASE_URL}/recipes/random`);
+    randomFoodUrl.searchParams.append("apiKey", SPOONACULAR_API_KEY);
+    randomFoodUrl.searchParams.append("number", 1);
+    const randomFoodResponse = await fetch(randomFoodUrl.toString(), {
+      method: "GET",
+    });
+    console.log(randomFoodResponse);
+    if (randomFoodResponse.status === 200) {
+      const randomFoodRaw = await randomFoodResponse.json();
+      const randomFood = randomFoodRaw.recipes.map((foodObj) => {
+        const foodInfo = {
+          foodName: foodObj.title,
+          image: foodObj.image,
+          imageType: foodObj.imageType,
+        };
+        return foodInfo;
+      })[0];
+      console.log(randomFood);
+    }
+    const randomFood = {
+      foodName: "Chicken Burritos",
+      image: "https://img.spoonacular.com/recipes/637999-556x370.jpg",
+      imageType: "jpg",
+    };
+
+    if (randomFood) {
+      if (!req.query.latitude || !req.query.longitude) {
+        res.status(200).json({ randomFoodInfo: randomFood, restaurant: {} });
+        return;
+        //in front , if donot have any restaurants, return alter
+        //refactor front end data type
+      }
+      //call google place with food name and location
+      const lat = req.query.latitude;
+      const lng = req.query.longitude;
+      const radius = 3000;
+      const placesUrl = new URL(
+        `https://maps.googleapis.com/maps/api/place/nearbysearch/json`
+      );
+      placesUrl.searchParams.append("location", `${lat},${lng}`);
+      placesUrl.searchParams.append("radius", radius);
+      placesUrl.searchParams.append("keyword", randomFood.foodName);
+      placesUrl.searchParams.append("type", "restaurant");
+      placesUrl.searchParams.append("maxResults", 3);
+      placesUrl.searchParams.append("pageSize", 3);
+      placesUrl.searchParams.append("key", GOOGLE_MAPS_API_KEY);
+
+      const placesResponse = await fetch(placesUrl.toString());
+      const placeInfoRaw = await placesResponse.json();
+      const placeInfo = placeInfoRaw.results.map((place) => {
+        return {
+          name: place.name,
+          address: place.vicinity,
+          rating: place.rating,
+          userRatingsTotal: place.user_ratings_total,
+          location: place.geometry.location,
+          placeId: place.place_id,
+        };
+      });
+      console.log(placeInfo);
+
+      res
+        .status(200)
+        .json({ randomFoodInfo: randomFood, restaurants: placeInfo });
+
+    }
+    res.status(401).json({ message: "Invalid password or email" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: "An error ocurred during fetching", error: error });
     return;
   }
 });
