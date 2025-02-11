@@ -6,7 +6,11 @@ Spoonacular
 Google Maps
 Google Places
 
-To use the backend with the front end, you will also need this repo: https://github.com/Greenfield-app/frontend
+To use the backend with the front end locally on your computer, you will also need this repo: https://github.com/Greenfield-app/frontend
+
+Or if you want to check out the deployed app, use the following link:
+
+https://frontend-gd1y.onrender.com/
 
 ## Getting Started
 
