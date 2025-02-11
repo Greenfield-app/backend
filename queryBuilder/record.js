@@ -25,6 +25,29 @@ const allRecord = async (user_id) => {
   }
 };
 
+const deleteRecord = async (record_id) => {
+  try {
+    console.log(record_id);
+    const result = await knex("record")
+      .returning(["id", "user_id", "food_id", "record_at"])
+      .where("id", record_id)
+      .del()
+      .then(([record]) => {
+        return record;
+      });
+    const returnRecord = {
+      recordId: result.id,
+      userId: result.user_id,
+      foodId: result.food_id,
+      recordAt: result.record_at,
+    };
+    return returnRecord;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 const lastRecord = async (user_id) => {
   try {
     const data = await knex("record").where("user_id", user_id).select();
@@ -69,4 +92,5 @@ module.exports = {
   allRecord,
   lastRecord,
   newRecord,
+  deleteRecord,
 };
