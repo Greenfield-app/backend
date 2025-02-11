@@ -205,10 +205,7 @@ app.get("/api/random", async (req, res) => {
       // if (!randomFoodResponse.status) {
       const randomFoodRaw = await randomFoodResponse.json();
       randomFood = randomFoodRaw.recipes.map((foodObj) => {
-<<<<<<< HEAD
-    
-=======
->>>>>>> main
+
         const foodInfo = {
           foodName: foodObj.title,
           image: foodObj.image,
