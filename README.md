@@ -1,6 +1,10 @@
 # What's Eat - Backend
 
-This is the backend repo for What's eat. It contains the server implemented with Node Express, and migrations/seeds for the database using knex.
+This is the backend repo for What's eat. It contains the server implemented with Node Express, and migrations/seeds for the database using knex. It also uses the following APIs:
+
+Spoonacular
+Google Maps
+Google Places
 
 To use the backend with the front end, you will also need this repo: https://github.com/Greenfield-app/frontend
 
