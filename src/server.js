@@ -214,7 +214,7 @@ app.get("/api/random", async (req, res) => {
       console.log(randomFood);
     } else {
       //switch to hard code foodinfo if hit daily limit of api
-      //TODO: make a helper to select random from db
+
       randomFood = {
         foodName: "Chicken Burritos",
         image: "https://img.spoonacular.com/recipes/637999-556x370.jpg",
@@ -226,7 +226,7 @@ app.get("/api/random", async (req, res) => {
       if (!req.query.latitude || !req.query.longitude) {
         return res
           .status(200)
-          .json({ randomFoodInfo: randomFood, restaurant: {} });
+          .json({ randomFoodInfo: randomFood, restaurant: [] });
 
         //refactor front end data type
       }
