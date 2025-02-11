@@ -10,28 +10,22 @@ const app = express();
 const PORT = process.env.PORT;
 const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const SPOONACULAR_BASE_URL = process.env.SPOONACULAR_BASE_URL;
-
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+const GOOGLE_PLACES_BASE_URL = process.env.GOOGLE_PLACES_BASE_URL;
 
-const origins = [
-  "https://frontend-gd1y.onrender.com",
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:4173",
-  "http://localhost:3000",
-];
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      if (origins.indexOf(origin) === -1) {
-        return callback(new Error("Not allowed origin"));
-      }
-      return callback(null, true);
-    },
+    origin: [
+      "https://frontend-gd1y.onrender.com",
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:4173",
+      "http://localhost:3000",
+    ],
     credentials: true,
   })
 );
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -203,9 +197,12 @@ app.get("/api/random", async (req, res) => {
       method: "GET",
     });
     console.log(randomFoodResponse);
+
+    let randomFood;
     if (randomFoodResponse.status === 200) {
       const randomFoodRaw = await randomFoodResponse.json();
-      const randomFood = randomFoodRaw.recipes.map((foodObj) => {
+      randomFood = randomFoodRaw.recipes.map((foodObj) => {
+    
         const foodInfo = {
           foodName: foodObj.title,
           image: foodObj.image,
@@ -214,12 +211,16 @@ app.get("/api/random", async (req, res) => {
         return foodInfo;
       })[0];
       console.log(randomFood);
+    } else {
+      //switch to hard code foodinfo if hit daily limit of api
+      //TODO: make a helper to select random from db
+      randomFood = {
+        foodName: "Chicken Burritos",
+        image: "https://img.spoonacular.com/recipes/637999-556x370.jpg",
+        imageType: "jpg",
+      };
     }
-    const randomFood = {
-      foodName: "Chicken Burritos",
-      image: "https://img.spoonacular.com/recipes/637999-556x370.jpg",
-      imageType: "jpg",
-    };
+ 
 
     if (randomFood) {
       if (!req.query.latitude || !req.query.longitude) {
@@ -232,9 +233,7 @@ app.get("/api/random", async (req, res) => {
       const lat = req.query.latitude;
       const lng = req.query.longitude;
       const radius = 3000;
-      const placesUrl = new URL(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json`
-      );
+      const placesUrl = new URL(`${GOOGLE_PLACES_BASE_URL}/nearbysearch/json`);
       placesUrl.searchParams.append("location", `${lat},${lng}`);
       placesUrl.searchParams.append("radius", radius);
       placesUrl.searchParams.append("keyword", randomFood.foodName);
@@ -260,7 +259,6 @@ app.get("/api/random", async (req, res) => {
       res
         .status(200)
         .json({ randomFoodInfo: randomFood, restaurants: placeInfo });
-
     }
     res.status(401).json({ message: "Invalid password or email" });
   } catch (error) {
