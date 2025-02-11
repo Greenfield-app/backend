@@ -16,9 +16,15 @@ const GOOGLE_PLACES_BASE_URL = process.env.GOOGLE_PLACES_BASE_URL;
 app.use(
   cors({
     origin: [
+<<<<<<< HEAD
       "https://frontend-gd1y.onrender.com",
       "http://localhost:5173",
       "http://localhost:5174",
+=======
+      "http://localhost:5174",
+      "https://frontend-gd1y.onrender.com",
+      "http://localhost:5173",
+>>>>>>> main
       "http://localhost:4173",
       "http://localhost:3000",
     ],
@@ -188,6 +194,7 @@ app.post("/api/logout", (req, res) => {
 
 //Fetch outer random food
 app.get("/api/random", async (req, res) => {
+  console.log(req);
   try {
     console.log(req.query);
     const randomFoodUrl = new URL(`${SPOONACULAR_BASE_URL}/recipes/random`);
@@ -200,9 +207,13 @@ app.get("/api/random", async (req, res) => {
 
     let randomFood;
     if (randomFoodResponse.status === 200) {
+      // if (!randomFoodResponse.status) {
       const randomFoodRaw = await randomFoodResponse.json();
       randomFood = randomFoodRaw.recipes.map((foodObj) => {
+<<<<<<< HEAD
     
+=======
+>>>>>>> main
         const foodInfo = {
           foodName: foodObj.title,
           image: foodObj.image,
@@ -213,20 +224,28 @@ app.get("/api/random", async (req, res) => {
       console.log(randomFood);
     } else {
       //switch to hard code foodinfo if hit daily limit of api
+<<<<<<< HEAD
       //TODO: make a helper to select random from db
+=======
+
+>>>>>>> main
       randomFood = {
         foodName: "Chicken Burritos",
         image: "https://img.spoonacular.com/recipes/637999-556x370.jpg",
         imageType: "jpg",
       };
     }
+<<<<<<< HEAD
  
+=======
+>>>>>>> main
 
     if (randomFood) {
       if (!req.query.latitude || !req.query.longitude) {
-        res.status(200).json({ randomFoodInfo: randomFood, restaurant: {} });
-        return;
-        //in front , if donot have any restaurants, return alter
+        return res
+          .status(200)
+          .json({ randomFoodInfo: randomFood, restaurant: [] });
+
         //refactor front end data type
       }
       //call google place with food name and location
@@ -243,6 +262,7 @@ app.get("/api/random", async (req, res) => {
       placesUrl.searchParams.append("key", GOOGLE_MAPS_API_KEY);
 
       const placesResponse = await fetch(placesUrl.toString());
+      console.log(placesResponse);
       const placeInfoRaw = await placesResponse.json();
       const placeInfo = placeInfoRaw.results.map((place) => {
         return {
@@ -256,22 +276,20 @@ app.get("/api/random", async (req, res) => {
       });
       console.log(placeInfo);
 
-      res
+      return res
         .status(200)
         .json({ randomFoodInfo: randomFood, restaurants: placeInfo });
     }
     res.status(401).json({ message: "Invalid password or email" });
   } catch (error) {
     console.log(error);
-    res
+    return res
       .status(500)
       .json({ message: "An error ocurred during fetching", error: error });
-    return;
   }
 });
 
 app.post("/api/logout", (req, res) => {
-
   req.session.destroy((error) => {
     if (error) {
       return res.status(500).json({ error: "Could not log out" });
@@ -279,29 +297,6 @@ app.post("/api/logout", (req, res) => {
     res.status(200).json({ message: "Logged out successfully" });
   });
 });
-
-//Fetch outer random food
-app.get("/api/random", async (req, res) => {
-  const randomFoodUrl = new URL(`${SPOONACULAR_BASE_URL}/recipes/random`);
-  randomFoodUrl.searchParams.append("apiKey", SPOONACULAR_API_KEY);
-  randomFoodUrl.searchParams.append("number", 10);
-  const randomFoodResponse = await fetch(randomFoodUrl.toString(), {
-    method: "GET",
-  });
-  const randomFoodRaw = await randomFoodResponse.json();
-  const randomFoodArr = randomFoodRaw.recipes.map((foodObj) => {
-    const foodInfo = {
-      foodName: foodObj.title,
-      image: foodObj.image,
-      imageType: foodObj.imageType,
-    };
-
-    return foodInfo;
-  });
-  console.log(randomFoodArr);
-  res.status(200).json(randomFoodArr);
-});
-
 
 app.listen(PORT, () => {
   console.log("listen to PORT:", PORT);
