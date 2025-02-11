@@ -120,6 +120,7 @@ app.post("/api/record/:userid/:foodid", async (req, res) => {
   }
 });
 app.delete("/api/record/:recordid", async (req, res) => {
+
   try {
     const recordId = req.params.recordid;
     const result = await record.deleteRecord(recordId);

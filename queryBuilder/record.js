@@ -12,6 +12,7 @@ const allRecord = async (user_id) => {
       })
       .map((record) => {
         return {
+          recordId: record.id,
           userId: record.user_id,
           foodId: record.food_id,
           recordAt: record.record_at,
