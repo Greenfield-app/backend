@@ -19,7 +19,6 @@ app.use(
       "https://frontend-gd1y.onrender.com",
       "http://localhost:5173",
       "http://localhost:5174",
-
       "http://localhost:4173",
       "http://localhost:3000",
     ],
@@ -120,6 +119,16 @@ app.post("/api/record/:userid/:foodid", async (req, res) => {
     res.status(403).send({ error: error, message: "Invalid record" });
   }
 });
+app.delete("/api/record/:recordid", async (req, res) => {
+  try {
+    const recordId = req.params.recordid;
+    const result = await record.deleteRecord(recordId);
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(404).send({ error: error, message: "Invalid record Id" });
+  }
+});
 
 app.post("/api/signup", async (req, res) => {
   const regInfo = req.body;
@@ -205,7 +214,6 @@ app.get("/api/random", async (req, res) => {
       // if (!randomFoodResponse.status) {
       const randomFoodRaw = await randomFoodResponse.json();
       randomFood = randomFoodRaw.recipes.map((foodObj) => {
-
         const foodInfo = {
           foodName: foodObj.title,
           image: foodObj.image,
