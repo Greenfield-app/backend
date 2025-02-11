@@ -16,15 +16,10 @@ const GOOGLE_PLACES_BASE_URL = process.env.GOOGLE_PLACES_BASE_URL;
 app.use(
   cors({
     origin: [
-<<<<<<< HEAD
       "https://frontend-gd1y.onrender.com",
       "http://localhost:5173",
       "http://localhost:5174",
-=======
-      "http://localhost:5174",
-      "https://frontend-gd1y.onrender.com",
-      "http://localhost:5173",
->>>>>>> main
+
       "http://localhost:4173",
       "http://localhost:3000",
     ],
@@ -224,21 +219,13 @@ app.get("/api/random", async (req, res) => {
       console.log(randomFood);
     } else {
       //switch to hard code foodinfo if hit daily limit of api
-<<<<<<< HEAD
-      //TODO: make a helper to select random from db
-=======
 
->>>>>>> main
       randomFood = {
         foodName: "Chicken Burritos",
         image: "https://img.spoonacular.com/recipes/637999-556x370.jpg",
         imageType: "jpg",
       };
     }
-<<<<<<< HEAD
- 
-=======
->>>>>>> main
 
     if (randomFood) {
       if (!req.query.latitude || !req.query.longitude) {
