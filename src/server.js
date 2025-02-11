@@ -21,16 +21,28 @@ const origins = [
 ];
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      if (origins.indexOf(origin) === -1) {
-        return callback(new Error("Not allowed origin"));
-      }
-      return callback(null, true);
-    },
+    origin: [
+      "https://frontend-gd1y.onrender.com",
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:4173",
+      "http://localhost:3000",
+    ],
     credentials: true,
   })
 );
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       if (!origin) return callback(null, true);
+//       if (origins.indexOf(origin) === -1) {
+//         return callback(new Error("Not allowed origin"));
+//       }
+//       return callback(null, true);
+//     },
+//     credentials: true,
+//   })
+// );
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
