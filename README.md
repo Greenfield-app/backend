@@ -27,7 +27,12 @@ In the backend root directory, create a .env.local file with the following field
 <p>DB_USER=<br>
 DB_PASSWORD=<br>
 PORT=<br>
-SESSION_SECRET=<p/>
+SESSION_SECRET=<br>
+SPOONACULAR_API_KEY= (https://spoonacular.com/food-api go this site and get a free key)<br>
+SPOONACULAR_BASE_URL=https://api.spoonacular.com/<br>
+GOOGLE_MAPS_API_KEY= (go google places api, get a 90 day free trail )<br>
+GOOGLE_PLACES_BASE_URL=https://maps.googleapis.com/maps/api/place<br>
+<p/>
 
 Fill in this fields with the information that matches your local database setup.
 
