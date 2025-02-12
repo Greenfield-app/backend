@@ -4,21 +4,27 @@ const getPhoto = require('../util/photo');
 
 // Function to fetch nearby restaurants based on location
 async function getNearbyRestaurants (req, res) {
-    const { location } = req.query;
+    const { location, coordinates } = req.query;
     
     // Check if location is provided
-    if (!location) {
-        return res.status(400).json({ error: 'Location query parameter is required' });
+    if (!location || !coordinates) {
+        return res.status(400).json({ error: 'Location or coordinates query parameter is required' });
     }
-
+    
 	try {
-        // Get geocoding data for the provided location
-        const locationCoordinates = await getGeocodingData(location);
 
-        // Get nearby restaurants based on location coordinates
-		const listOfNearbyRestaurants = await nearbySearch(locationCoordinates);
-
-        res.json(listOfNearbyRestaurants);
+        if (coordinates) {
+            // Get nearby restaurants based on coordinates
+            const listOfNearbyRestaurants = await nearbySearch(coordinates);
+            res.json(listOfNearbyRestaurants);
+        } else {
+            // Get geocoding data for the provided location
+            const locationCoordinates = await getGeocodingData(location);        
+            // Get nearby restaurants based on location coordinates
+            const listOfNearbyRestaurants = await nearbySearch(locationCoordinates);
+            res.json(listOfNearbyRestaurants);
+        } 
+        
     } catch (error) {
         console.error('Error fetching nearby restaurants:', error);
         res.status(500).json({ error: 'Internal Server Error' });
