@@ -32,7 +32,8 @@ async function nearbySearch(coordinates) {
           'photos': restaurant.photos && restaurant.photos.length > 0
             ? restaurant.photos[0].photo_reference : undefined,
           'priceLevel': restaurant.price_level,
-          'rating': restaurant.rating
+          'rating': restaurant.rating,
+          'totalReviews': restaurant.user_ratings_total
         }
       });
       
