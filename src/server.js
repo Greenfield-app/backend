@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
@@ -12,6 +11,8 @@ const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const SPOONACULAR_BASE_URL = process.env.SPOONACULAR_BASE_URL;
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const GOOGLE_PLACES_BASE_URL = process.env.GOOGLE_PLACES_BASE_URL;
+
+const restaurantRoutes = require('./routes/restaurantRoutes');
 
 app.use(
   cors({
@@ -29,12 +30,12 @@ app.use(
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    name: "sessionId",
+    // name: "sessionId",
     resave: false,
     saveUninitialized: false,
-    rolling: true,
+    // rolling: true,
     cookie: {
-      sameSite: "none",
+      // sameSite: "none",
       maxAge: 3 * 24 * 60 * 60 * 1000,
       secure: process.env.NODE_ENV === "production",
       httpOnly: true,
@@ -43,6 +44,10 @@ app.use(
   })
 );
 app.use(express.json());
+
+// API routes
+app.use('/restaurants', restaurantRoutes);
+
 
 app.get("/api", (req, res) => {
   res.send({ message: "connected" }).status(200);

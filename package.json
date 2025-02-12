@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/server.js",
-    "express-dev": "nodemon ./src/server.js",
+    "express-dev": "dotenvx run -- nodemon ./src/server.js",
     "build": "npm install && npm install express && npm run migrate-latest && npm run seed-data || exit 1",
     "migrate:make": "knex migrate:make --knexfile knexfile.js --migrations-directory ./db/migrations",
     "migrate-latest": "npx knex migrate:latest --knexfile knexfile.js",
@@ -19,13 +19,16 @@
     "url": "git+https://github.com/Greenfield-app/backend"
   },
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.35.0",
     "@types/bcryptjs": "^2.4.6",
+    "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
     "knex": "^2.5.1",
+    "nodemon": "^3.1.9",
     "pg": "^8.11.3"
   }
 }
