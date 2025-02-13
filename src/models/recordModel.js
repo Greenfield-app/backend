@@ -17,7 +17,11 @@ const Records = {
         })
         .where({ 'record.user_id': id })
         .orderBy('record.record_at', 'desc')
-    }
+    },
+
+    add(record) {
+        return knex('record').insert(record);
+    },
 }
 
 module.exports = Records;

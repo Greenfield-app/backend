@@ -8,7 +8,7 @@ async function getNearbyRestaurants (req, res) {
     const { location, coordinates } = req.query;
     
     // Check if location is provided
-    if (!location || !coordinates) {
+    if (!location && !coordinates) {
         return res.status(400).json({ error: 'Location or coordinates query parameter is required' });
     }
     
