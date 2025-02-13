@@ -2,6 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
+
 const { hashPassword } = require('../../src/util/passwordUtils')
 exports.seed = async function (knex) {
   await knex("users").del();
