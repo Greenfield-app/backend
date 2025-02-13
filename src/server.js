@@ -1,7 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
-const { hashHelper, vertify } = require("../passwordHelper/helper");
 const record = require("../queryBuilder/record");
 const user = require("../queryBuilder/user");
 const food = require("../queryBuilder/food");
@@ -13,6 +13,7 @@ const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const GOOGLE_PLACES_BASE_URL = process.env.GOOGLE_PLACES_BASE_URL;
 
 const restaurantRoutes = require('./routes/restaurantRoutes');
+const { hashPassword, comparePassword } = require("./util/passwordUtils");
 const recordRoutes = require('./routes/recordRoutes')
 
 app.use(
@@ -144,7 +145,7 @@ app.post("/api/signup", async (req, res) => {
   try {
     const plainPassword = regInfo.password;
     const email = regInfo.email;
-    const hashedPwd = await hashHelper(plainPassword);
+    const hashedPwd = await hashPassword(plainPassword);
     const userInfo = await user.newUser(regInfo.userName, hashedPwd, email);
     console.log(userInfo);
     req.session.user = {
@@ -172,7 +173,7 @@ app.post("/api/signin", async (req, res) => {
       res.status(401).json({ message: "Invalid password or email" });
       return;
     }
-    const compared = await verify(
+    const compared = await comparePassword(
       signInInfo.password,
       originPassword.password_hashed
     );
@@ -302,5 +303,5 @@ app.post("/api/logout", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log("listen to PORT:", PORT);
+  console.log(`Server running on port ${PORT}`);
 });

@@ -7,7 +7,7 @@ const { hashPassword } = require('../../src/util/passwordUtils')
 exports.seed = async function (knex) {
   await knex("users").del();
 
-  const users =[
+  const users = [
     {
       username: "Anne",
       email: "example1@mail.com",
