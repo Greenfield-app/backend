@@ -13,6 +13,7 @@ const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 const GOOGLE_PLACES_BASE_URL = process.env.GOOGLE_PLACES_BASE_URL;
 
 const restaurantRoutes = require('./routes/restaurantRoutes');
+const recordRoutes = require('./routes/recordRoutes')
 
 app.use(
   cors({
@@ -47,6 +48,8 @@ app.use(express.json());
 
 // API routes
 app.use('/restaurants', restaurantRoutes);
+app.use('/records', recordRoutes);
+
 
 
 app.get("/api", (req, res) => {
@@ -160,15 +163,16 @@ app.post("/api/signup", async (req, res) => {
   }
 });
 
-app.patch("/api/signin", async (req, res) => {
+app.post("/api/signin", async (req, res) => {
   const signInInfo = req.body;
+  console.log(req.body)
   try {
     const originPassword = await user.getPasswod(signInInfo.email);
     if (!originPassword) {
       res.status(401).json({ message: "Invalid password or email" });
       return;
     }
-    const compared = await vertify(
+    const compared = await verify(
       signInInfo.password,
       originPassword.password_hashed
     );
@@ -185,6 +189,7 @@ app.patch("/api/signin", async (req, res) => {
     }
     res.status(401).json({ message: "Invalid password or email" });
   } catch (error) {
+    console.log(req.body);
     console.log(error);
     res
       .status(500)
