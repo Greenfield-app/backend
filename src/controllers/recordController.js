@@ -1,4 +1,4 @@
-const Records = require('../models/restaurantModel')
+const Records = require('../models/recordModel')
 
 // Function to fetch Eat History by user
 async function getRecordsByUser (req, res) {

@@ -55,13 +55,13 @@ async function addRestaurant (req, res) {
     const restaurant = req.body;
 
     // Ensure required fields are provided
-    if(restaurant.name || !restaurant.placeID) {
+    if(!restaurant.name || !restaurant.placeID) {
         res.status(400);
         throw new Error('Fill out all the fields');
     }
 
     // Save the restaurant in the database
-    const newRestaurant = await Restaurants.add(restaurant);
+    const newRestaurant = await Restaurants.add({ 'foodname': restaurant.name, 'description': restaurant.placeID});
 
     if (newRestaurant) {
         res.status(201).json({
